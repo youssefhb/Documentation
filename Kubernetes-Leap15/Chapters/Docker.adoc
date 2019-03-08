@@ -3,14 +3,28 @@
 === Docker installation
 [source]
 ------------------------------------------------------------------------
-sudo yum install -y yum-utils device-mapper-persistent-data  lvm2
-sudo yum-config-manager  --add-repo  https://download.docker.com/linux/centos/docker-ce.repo
-sudo yum install docker-ce
-sudo systemctl start docker
+sudo zypper ar -cf \
+http://download.opensuse.org/repositories/home:/janhebler:/kubi/openSUSE_Leap_15.0/ Docker
 
-# Tests docker 
-sudo docker run hello-world
+
+sudo zypper in docker
+sudo zypper in docker-bash-completion
 ------------------------------------------------------------------------
+
+=== Start & check docker
+[source]
+------------------------------------------------------------------------
+sudo systemctl start  docker
+sudo systemctl status docker
+
+# Add the current user to the docker group
+sudo usermod -aG docker $USER
+
+# Log out from the session or restart the OS in case you're using a VM
+
+docker run hello-world
+------------------------------------------------------------------------
+
 
 === Create an image
 [source]
@@ -37,7 +51,7 @@ var www = http.createServer(handler);
 www.listen(8080);
 --------------------------------------------------------------------------
 
-=== Build the image 
+=== Build the image
 [source]
 --------------------------------------
 docker build -t image-name .

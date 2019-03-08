@@ -1,16 +1,16 @@
-= Kubernetes on Centos 7
+= Kubernetes on OpenSuse Leap 15
 Youssef Hbali(c) 2019
-Version 1.0, 07.03.2019
+Version 1.0, 08.03.2019
 :toc:
 :toclevels: 4
 :imagesdir: Figures
 :sectnums:
-:sectnumlevels: 5 
+:sectnumlevels: 5
 :doctype: book
 :chapter-label:
 :lang: en
 :icons: font
-:quick-uri: https://asciidoctor.org/docs/asciidoc-syntax-quick-reference/                                         
+:quick-uri: https://asciidoctor.org/docs/asciidoc-syntax-quick-reference/
 
 
 
