@@ -1,0 +1,55 @@
+== Kubernetes
+
+=== Virtual Box installaiton
+[source]
+--------------------------------------------------------------------------
+sudo vi /etc/yum.repos.d/virtualbox.repo
+
+# Add
+[virtualbox]
+name=Oracle Linux / RHEL / CentOS-$releasever / $basearch - VirtualBox
+baseurl=http://download.virtualbox.org/virtualbox/rpm/el/$releasever/$basearch
+enabled=1
+gpgcheck=1
+repo_gpgcheck=1
+gpgkey=https://www.virtualbox.org/download/oracle_vbox.asc
+
+
+sudo yum update
+sudo yum install -y VirtualBox-5.2
+
+# Make sure  VirtualBox Linux kernel module  is active
+systemctl status vboxdrv
+
+--------------------------------------------------------------------------
+
+
+=== VirtualBox Linux kernel module not active
+[source]
+-----------------------------------------------------
+yum groupinstall "Development tools"
+yum install https://centos7.iuscommunity.org/ius-release.rpm
+yum install dkms
+# Install Kernel headers
+sudo yum install "kernel-devel-uname-r == $(uname -r)"
+sudo /sbin/rcvboxdrv  setup
+-----------------------------------------------------
+
+
+
+=== Minikube  
+The simplest and quickest path to a fully functioning Kubernetes cluster is by using Minikube. Minikube is a tool that sets up a single-node cluster that’s great for both
+testing Kubernetes and developing apps locally. Although we can’t show certain Kubernetes features related to managing apps on
+multiple nodes, the single-node cluster should be enough for exploring most topics discussed in this book.
+
+[source]
+---------------------------------------------------------------------------
+curl -Lo minikube https://storage.googleapis.com/minikube/releases/v0.23.0/minikube-linux-amd64 && chmod +x minikube
+---------------------------------------------------------------------------
+
+
+=== Kubectl
+[source]
+---------------------------------------------------------------------------
+curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+---------------------------------------------------------------------------

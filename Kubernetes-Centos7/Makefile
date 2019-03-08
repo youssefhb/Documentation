@@ -1,7 +1,7 @@
 SHELL=/bin/bash
 
 FILE_NAME = Kubernetes
-READER = AcroRd32.exe
+READER = evince
 
 
 

@@ -1,0 +1,52 @@
+== Docker
+
+=== Docker installation
+[source]
+------------------------------------------------------------------------
+sudo yum install -y yum-utils device-mapper-persistent-data  lvm2
+sudo yum-config-manager  --add-repo  https://download.docker.com/linux/centos/docker-ce.repo
+sudo yum install docker-ce
+sudo systemctl start docker
+
+# Tests docker 
+sudo docker run hello-world
+------------------------------------------------------------------------
+
+=== Create an image
+[source]
+--------------------------------------------------------------------------
+touch Dockerfile
+
+# Add
+FROM node:7
+ADD app.js /app.js
+ENTRYPOINT ["node", "app.js"]
+
+touch app.js
+
+# Add
+const http = require('http');
+const os = require('os');
+console.log("Kubia server starting...");
+var handler = function(request, response) {
+console.log("Received request from " + request.connection.remoteAddress);
+response.writeHead(200);
+response.end("You've hit " + os.hostname() + "\n");
+};
+var www = http.createServer(handler);
+www.listen(8080);
+--------------------------------------------------------------------------
+
+=== Build the image 
+[source]
+--------------------------------------
+docker build -t image-name .
+--------------------------------------
+
+
+=== Run and test the buit image
+[source]
+----------------------------------------------------------------------------
+docker run --name container-name -p 8080:8080 -d image-name
+curl localhost:8080
+----------------------------------------------------------------------------
