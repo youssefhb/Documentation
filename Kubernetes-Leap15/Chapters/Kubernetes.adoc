@@ -56,7 +56,8 @@ spec:
 	  name  : kubia
 	  ports :
 	  - containerPort : 8080   # The port the app is listening on
-	  	protocol : TCP  	 
+	  	protocol : TCP
+
 
 # Specifying ports in the pod definition is purely informational.	  	
 ------------------------------------------------------------------------------
@@ -91,4 +92,54 @@ curl localhost:8888
 ==== Organizing pods with labels
 [source]
 ------------------------------------------------------
+
+### kubia-manual-v2.yaml
+apiVersion : v1   
+kind: Pod
+metadata:
+	name: kubia-manual  
+	lables:         # Adding two lables to the Pod                  
+		creation_method: kubia-manual
+		env: prod
+spec:
+	containers:
+	- image : luksa/kubia  
+	  name  : kubia
+	  ports :
+	  - containerPort : 8080 
+	  	protocol : TCP
 ------------------------------------------------------
+
+==== Display and filter lables
+[source]
+---------------------------------------------------------------------------
+kubectl get po --show-labels
+
+# Display the two lables as columns
+kubectl get po -L creation_method,env  
+
+# Add the label  creation_method with value manual to the Pod kubia-manual
+kubectl lable po kubia-manual  creation_method=manual  
+
+# Change existing Pod value 
+kubectl label po kubia-manual-v2  env=debug  --overwrite 
+
+# Filter pods with label  creation_method=manual
+kubectl get po  -l creation_method=manual
+
+# Pods with label named env
+kubectl get po  -l env 
+
+# Pods that does not have env label
+kubectl get po  -l '!env'
+
+kubectl get po -l creation_method!=manual
+
+# Pod with label env and value in (prod,devel)
+kubectl get po -l env in (prod,devel)
+
+kubectl get po -l env notin (prod,devel)
+
+# Selection with two lables.
+kubectl get po -l env=prod,creation_method=manual
+---------------------------------------------------------------------------
