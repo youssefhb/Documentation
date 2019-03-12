@@ -41,3 +41,54 @@ curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s htt
 
 === Starting Minikube
 image::Minikube-start.png[alt=Minikube,width=500,height=400]
+
+=== Configuration Sample
+[source]
+------------------------------------------------------------------------------
+### kubia-manual.yaml
+apiVersion : v1   # Version of the Kubernetes API
+kind: Pod
+metadata:
+	name : kubia-manual  # The name of the Pod
+spec:
+	containers:
+	- image : luksa/kubia  
+	  name  : kubia
+	  ports :
+	  - containerPort : 8080   # The port the app is listening on
+	  	protocol : TCP  	 
+
+# Specifying ports in the pod definition is purely informational.	  	
+------------------------------------------------------------------------------
+
+
+=== Pod
+==== Pod creation and logs 
+[source]
+------------------------------------------------------------------------------
+kubectl explain pods
+kubectl explain pod.spec
+kubectl create -f  kubia-manual.yaml
+
+# Retrieving the deinition of a running pod
+kubectl get po  kubia-manual -o yaml
+kubectl get po  kubia-manual -o json
+
+# List all pods
+kubectl get pods
+
+# Viewing the logs of pod
+kubectl logs  kubia-manual
+
+# Viewing logs  of a multi-container pod.
+kubectl logs  kubia-manual -c kubia
+
+# Port forwarding
+kubectl port-forward kubia-manual 8888:8080 
+curl localhost:8888
+------------------------------------------------------------------------------
+
+==== Organizing pods with labels
+[source]
+------------------------------------------------------
+------------------------------------------------------
