@@ -41,3 +41,220 @@ curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s htt
 
 === Starting Minikube
 image::Minikube-start.png[alt=Minikube,width=500,height=400]
+
+=== Configuration Sample
+[source]
+------------------------------------------------------------------------------
+### kubia-manual.yaml
+apiVersion : v1   # Version of the Kubernetes API
+kind: Pod
+metadata:
+	name : kubia-manual  # The name of the Pod
+spec:
+	containers:
+	- image : luksa/kubia  
+	  name  : kubia
+	  ports :
+	  - containerPort : 8080   # The port the app is listening on
+	  	protocol : TCP
+
+
+# Specifying ports in the pod definition is purely informational.	  	
+------------------------------------------------------------------------------
+
+
+=== Pod
+==== Pod creation and logs 
+[source]
+------------------------------------------------------------------------------
+kubectl explain pods
+kubectl explain pod.spec
+kubectl create -f  kubia-manual.yaml
+
+# Retrieving the deinition of a running pod
+kubectl get po  kubia-manual -o yaml
+kubectl get po  kubia-manual -o json
+
+# List all pods
+kubectl get pods
+
+# Viewing the logs of pod
+kubectl logs  kubia-manual
+
+# Viewing logs  of a multi-container pod.
+kubectl logs  kubia-manual -c kubia
+
+# Port forwarding
+kubectl port-forward kubia-manual 8888:8080 
+curl localhost:8888
+------------------------------------------------------------------------------
+
+
+==== Pods deletion
+[source]
+------------------------------------------------------------------------------
+kubectl delete po kubia-gpu
+
+# Delete Pods using labels.
+kubectl delete po -l creation_method=manual
+
+# Deleting pods by namespace deletion.
+kubectl delete ns custom-namespace
+
+# Deleting all namespaces.
+kubectl delect po --all
+
+# Deleting all resources, ReplicationController, Pods and Services.
+kubectl delete all --all
+------------------------------------------------------------------------------
+
+
+==== Organizing pods with labels
+[source]
+------------------------------------------------------
+
+### kubia-manual-v2.yaml
+apiVersion : v1   
+kind: Pod
+metadata:
+	name: kubia-manual  
+	lables:         # Adding two lables to the Pod                  
+		creation_method: kubia-manual
+		env: prod
+spec:
+	containers:
+	- image : luksa/kubia  
+	  name  : kubia
+	  ports :
+	  - containerPort : 8080 
+	  	protocol : TCP
+------------------------------------------------------
+
+==== Display and filter lables
+[source]
+---------------------------------------------------------------------------
+kubectl get po --show-labels
+
+# Display the two lables as columns
+kubectl get po -L creation_method,env  
+
+# Add the label  creation_method with value manual to the Pod kubia-manual
+kubectl lable po kubia-manual  creation_method=manual  
+
+# Change existing Pod value 
+kubectl label po kubia-manual-v2  env=debug  --overwrite 
+
+# Filter pods with label  creation_method=manual
+kubectl get po  -l creation_method=manual
+
+# Pods with label named env
+kubectl get po  -l env 
+
+# Pods that does not have env label
+kubectl get po  -l '!env'
+
+kubectl get po -l creation_method!=manual
+
+# Pod with label env and value in (prod,devel)
+kubectl get po -l env in (prod,devel)
+
+kubectl get po -l env notin (prod,devel)
+
+# Selection with two lables.
+kubectl get po -l env=prod,creation_method=manual
+---------------------------------------------------------------------------
+
+=== Node
+==== Categorizing nodes
+[source]
+--------------------------------------------------------
+# Adding label gpu to the node  gke-kubia-85f6-node-0rrx
+kubectl label node gke-kubia-85f6-node-0rrx gpu=true
+
+# List all nodes with label gpu = true
+kubectl get node -l gpu=true
+--------------------------------------------------------
+
+==== Sheduling pods to specific nodes.
+
+If you need to deploy a new pod that needs GPU, you can use nodeSelector.
+
+[source]
+--------------------------------------------------------
+apiVersion: v1
+kind:Pod
+metadata:
+	name: kubia
+	labels:
+		env: devel
+spec:
+	nodeSelector:
+		gpu : "true"
+	containers:
+	- image: luksa/kubia  
+	  name: kubia
+	  ports:
+	  - containerPort: 8080
+	  	protocol: TCP
+
+--------------------------------------------------------
+
+=== Annotation
+
+annotations can hold much larger pieces of information and are primarily meant to be used by tools. Certain annotations are automatically added
+to objects by Kubernetes, but others are added by users manually.
+
+[source]
+------------------------------------------------------------------------------
+kubectl annotation pod kubia-label  mycompany.com/someannotation="foo bar"
+kubectl describe pod kubia-manual
+------------------------------------------------------------------------------
+
+=== Namespace
+The need to split objects into two groupes.
+
+[source]
+----------------------------------------------------------------------
+# Lists all the namespaces
+kubectl  get ns
+
+# Gets the pods belonging to the namespace kube-system.
+kubectl get po --namespace  kube-system	
+----------------------------------------------------------------------
+
+==== Creating a namespace
+===== From YAML
+[source]
+----------------------------------------------
+apiVersion: v1
+kind: Namespace
+metadata:
+	name:custom-namespace
+----------------------------------------------
+
+[source]
+----------------------------------------------
+kubectl create -f custom-namespace.yaml
+----------------------------------------------
+
+
+===== From command line
+[source]
+----------------------------------------------
+kubectl create namespace  custom-namespace
+----------------------------------------------
+
+
+==== Managing objects in other namespaces.
+[source]
+--------------------------------------------------------------
+kubectl create -f kubia-manual.yaml  -n custom-namespace
+--------------------------------------------------------------
+
+.TIP
+==================================================================================
+kcd='kubectl config set-context $(kubectl config currentcontext) --namespace '
+
+# use the new alias to switch to another namespace
+kcd some-namespace.
+==================================================================================
