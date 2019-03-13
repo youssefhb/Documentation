@@ -1,0 +1,73 @@
+== Ansible
+In computing, Ansible is an open-source software provisioning, configuration management, and application deployment tool. It runs on many Unix-like systems, and can configure both Unix-like systems as well as Microsoft Windows.
+
+
+=== Installation
+[source]
+-----------------------------------------
+sudo zypper in ansible
+-----------------------------------------
+
+
+=== Clients Configuration
+
+==== Clients Access by names
+[source]
+-------------------------------------
+# You have three VMs
+# 127.0.10.1      ouarzazate
+# 127.0.10.2      marrakech
+# 127.0.10.3      casa
+
+sudo vi /etc/hosts
+
+# Add the following entries
+127.0.10.1      ouarzazate
+127.0.10.2      marrakech
+127.0.10.3      casablanca
+-------------------------------------
+
+=== Ssh key-based access
+[source]
+------------------------------------------
+# Generate RSA key pair
+ssh-keygen
+ssh-copy-id  -i ~/.ssh/id_rsa.pub  user1@ouarzazate   # user1 is optionnal if is the same user
+ssh-copy-id  -i ~/.ssh/id_rsa.pub  user1@marrakech
+ssh-copy-id  -i ~/.ssh/id_rsa.pub  user1@casablanca
+------------------------------------------
+
+
+=== Escalate without password
+[source]
+------------------------------------------
+sudo visudo
+# Add
+youssef ALL=(ALL) NOPASSWD: ALL
+------------------------------------------
+
+=== Set the ansible inventory
+
+[source]
+----------------------------------------------------
+sudo vi /etc/ansible/hosts
+# Two groups grp1   and  grp2
+[gui]
+ouarzazate
+marrakech
+
+[nogui]
+casablanca  ansible_user=admin
+
+# Group lab using range
+[lab]
+127.10.0.[1:6]
+
+----------------------------------------------------
+
+=== Run ansible module (-m)
+[source]
+------------------------------------------------
+ansible -m ping all
+------------------------------------------------
+
