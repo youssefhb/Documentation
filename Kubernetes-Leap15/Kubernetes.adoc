@@ -20,3 +20,4 @@ Version 1.0, 08.03.2019
 
 include::Chapters/Docker.adoc[]
 include::Chapters/Kubernetes.adoc[]
+include::Chapters/Ansible.adoc[]
